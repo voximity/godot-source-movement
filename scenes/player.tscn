@@ -1,0 +1,55 @@
+[gd_scene load_steps=10 format=3 uid="uid://bkeklt5v0xpyq"]
+
+[ext_resource type="Script" path="res://scripts/player.gd" id="1_47kse"]
+[ext_resource type="AudioStream" uid="uid://11a33r4ay5rl" path="res://assets/sounds/concrete1.wav" id="3_1q4t8"]
+[ext_resource type="AudioStream" uid="uid://wqlxhxqw3jmq" path="res://assets/sounds/concrete2.wav" id="4_pe23p"]
+[ext_resource type="AudioStream" uid="uid://c4w3xjgurlsw0" path="res://assets/sounds/concrete3.wav" id="5_rt7rf"]
+[ext_resource type="Script" path="res://scripts/step_sound_timer.gd" id="6_ghod5"]
+[ext_resource type="AudioStream" uid="uid://bjhl4iykatewa" path="res://assets/sounds/concrete4.wav" id="6_v18u7"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_tw5dd"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1oua4"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_5m4yo"]
+streams_count = 4
+random_pitch = 1.0
+random_volume_offset_db = 0.0
+stream_0/stream = ExtResource("3_1q4t8")
+stream_0/weight = 1.0
+stream_1/stream = ExtResource("4_pe23p")
+stream_1/weight = 1.0
+stream_2/stream = ExtResource("5_rt7rf")
+stream_2/weight = 1.0
+stream_3/stream = ExtResource("6_v18u7")
+stream_3/weight = 1.0
+
+[node name="Player" type="CharacterBody3D"]
+script = ExtResource("1_47kse")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("CapsuleMesh_tw5dd")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_1oua4")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+fov = 90.0
+
+[node name="StepSound" type="AudioStreamPlayer3D" parent="Camera3D"]
+stream = SubResource("AudioStreamRandomizer_5m4yo")
+
+[node name="Timer" type="Timer" parent="Camera3D/StepSound"]
+wait_time = 0.5
+autostart = true
+script = ExtResource("6_ghod5")
+
+[node name="SpeedLabel" type="Label" parent="."]
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 64.0
+offset_bottom = 50.0
+text = "0.0"
+
+[connection signal="timeout" from="Camera3D/StepSound/Timer" to="Camera3D/StepSound/Timer" method="on_timeout"]
